@@ -13,4 +13,3 @@ setup(
     url='http://github.com/ricobl/python-chuck-norris',
     py_modules=['chuck'],
 )
-

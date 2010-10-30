@@ -50,9 +50,49 @@ def test_assert_equals_asserts_true_for_not_equals():
     chuck.assert_equals('chuck', 'CHUCK')
 
 
+def test_assert_equals_asserts_true_for_equal():
+    chuck.assert_equal('chuck', 'chuck')
+
+
+def test_assert_equal_asserts_true_for_not_equal():
+    chuck.assert_equal('chuck', 'CHUCK')
+
+
 def test_assert_not_equals_asserts_true_for_not_equals():
     chuck.assert_not_equals('chuck', 'CHUCK')
 
 
 def test_assert_not_equals_asserts_true_for_equals():
     chuck.assert_not_equals('chuck', 'chuck')
+
+
+def test_assert_almost_equal_asserts_true_within_2_places():
+    chuck.assert_almost_equal(2.3333333333333, 2.33333334, places=2)
+
+
+def test_assert_almost_equal_asserts_true_within_10_places():
+    chuck.assert_almost_equal(2.3333333333333, 2.33333334, places=10)
+
+
+def test_assert_not_almost_equal_asserts_true_within_10_places():
+    chuck.assert_not_almost_equal(2.3333333333333, 2.33333334, places=10)
+
+
+def test_assert_not_almost_equal_asserts_true_within_2_places():
+    chuck.assert_not_almost_equal(2.3333333333333, 2.33333334, places=2)
+
+
+def test_assert_almost_equals_asserts_true_within_2_places():
+    chuck.assert_almost_equals(2.3333333333333, 2.33333334, places=2)
+
+
+def test_assert_almost_equals_asserts_true_within_10_places():
+    chuck.assert_almost_equals(2.3333333333333, 2.33333334, places=10)
+
+
+def test_assert_not_almost_equals_asserts_true_within_10_places():
+    chuck.assert_not_almost_equals(2.3333333333333, 2.33333334, places=10)
+
+
+def test_assert_not_almost_equals_asserts_true_within_2_places():
+    chuck.assert_not_almost_equals(2.3333333333333, 2.33333334, places=2)

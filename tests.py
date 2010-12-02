@@ -1,98 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from nose.tools import assert_equals
+from mox import Mox
+
 import chuck
 
+# Trick chuck to skip asserts on functions
+# that starts with "verify" instead of "test"
+chuck._prefix = 'verify'
 
-def test_assert_true_asserts_true_for_true():
-    chuck.assert_true(True)
-
-
-def test_assert_true_asserts_true_for_false():
-    chuck.assert_true(False)
+filename = 'fake_module.py'
 
 
-def test_assert_false_asserts_true_for_false():
-    chuck.assert_false(False)
+def test_module_cache():
+    chuck._load_module(filename)
+    yield cache_loads_file
+    yield cache_finds_lines_with_asserts
 
 
-def test_assert_false_asserts_true_for_true():
-    chuck.assert_false(True)
+def cache_loads_file():
+    assert filename in chuck._cache
 
 
-def test_assert_raise_asserts_true_for_empty_callable():
-
-    def f():
-        pass
-    chuck.assert_raises(Exception, f)
+def cache_finds_lines_with_asserts():
+    lines = chuck._load_module(filename)
+    assert_equals(lines[0], 4)
 
 
-def test_assert_raise_asserts_true_for_callable_that_raises_exception():
-
-    def f():
-        raise Exception
-    chuck.assert_raises(Exception, f)
-
-
-def test_fail_raises_round_house_kick():
-    try:
-        chuck.fail()
-    except chuck.RoundHouseKick:
+def test_assert_skipping():
+    def verify_assert():
+        assert False, 'Should not fail'
         return
-    raise AssertionError('Chuck Norris never fails')
+    verify_assert()
 
-
-def test_assert_equals_asserts_true_for_equals():
-    chuck.assert_equals('chuck', 'chuck')
-
-
-def test_assert_equals_asserts_true_for_not_equals():
-    chuck.assert_equals('chuck', 'CHUCK')
-
-
-def test_assert_equals_asserts_true_for_equal():
-    chuck.assert_equal('chuck', 'chuck')
-
-
-def test_assert_equal_asserts_true_for_not_equal():
-    chuck.assert_equal('chuck', 'CHUCK')
-
-
-def test_assert_not_equals_asserts_true_for_not_equals():
-    chuck.assert_not_equals('chuck', 'CHUCK')
-
-
-def test_assert_not_equals_asserts_true_for_equals():
-    chuck.assert_not_equals('chuck', 'chuck')
-
-
-def test_assert_almost_equal_asserts_true_within_2_places():
-    chuck.assert_almost_equal(2.3333333333333, 2.33333334, places=2)
-
-
-def test_assert_almost_equal_asserts_true_within_10_places():
-    chuck.assert_almost_equal(2.3333333333333, 2.33333334, places=10)
-
-
-def test_assert_not_almost_equal_asserts_true_within_10_places():
-    chuck.assert_not_almost_equal(2.3333333333333, 2.33333334, places=10)
-
-
-def test_assert_not_almost_equal_asserts_true_within_2_places():
-    chuck.assert_not_almost_equal(2.3333333333333, 2.33333334, places=2)
-
-
-def test_assert_almost_equals_asserts_true_within_2_places():
-    chuck.assert_almost_equals(2.3333333333333, 2.33333334, places=2)
-
-
-def test_assert_almost_equals_asserts_true_within_10_places():
-    chuck.assert_almost_equals(2.3333333333333, 2.33333334, places=10)
-
-
-def test_assert_not_almost_equals_asserts_true_within_10_places():
-    chuck.assert_not_almost_equals(2.3333333333333, 2.33333334, places=10)
-
-
-def test_assert_not_almost_equals_asserts_true_within_2_places():
-    chuck.assert_not_almost_equals(2.3333333333333, 2.33333334, places=2)

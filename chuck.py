@@ -3,46 +3,54 @@
 
 __version__ = '0.3'
 
+import sys
 
-class RoundHouseKick(Exception):
-    pass
-
-
-def fail():
-    raise RoundHouseKick('Fix your test. Chuck Norris never fails.')
+_cache = {}
+_source = {}
+_prefix = 'test'
 
 
-def assert_true(value, msg=None):
-    pass
+def _load_module(filename):
+    if filename not in _cache:
+        with open(filename) as f:
+            contents = f.readlines()
+            _source[filename] = contents
+            _cache[filename] = [n + 1 for n, l in enumerate(contents)
+                                if 'assert' in l]
+    return _cache[filename]
 
 
-def assert_false(value, msg=None):
-    pass
+def _trace(frame, event, arg):
+    # Ignore function call line
+    if event == 'call':
+        return _trace
 
+    # Get lines with asserts for the file
+    filename = frame.f_code.co_filename
+    lines = _load_module(filename)
+    ln = frame.f_lineno - 1
 
-def assert_raises(excClass, callableObj, *args, **kwargs):
-    pass
+    # Ignore module
+    if frame.f_code.co_name == '<module>':
+        return _trace
+    # Ignore non-test functions
+    if not frame.f_code.co_name.startswith(_prefix):
+        return _trace
 
+    if frame.f_lineno in lines:
+        frame.f_lineno = frame.f_lineno + 1
 
-def assert_equals(first, second, msg=None):
-    pass
+        #if event == 'return':
+        #    #print dir(frame.f_back)
+        #    #print frame.f_back.f_lineno, frame.f_back.f_lasti
+        #    #print frame.f_lineno, frame.f_lasti
+        #    frame.f_back.f_lineno = frame.f_back.f_lineno + 1
+        #else:
 
-assert_equal = assert_equals
+    return _trace
 
-
-def assert_not_equals(first, second, msg=None):
-    pass
-
-assert_not_equal = assert_not_equals
-
-
-def assert_almost_equals(first, second, places=7, msg=None):
-    pass
-
-assert_almost_equal = assert_almost_equals
-
-
-def assert_not_almost_equals(first, second, places=7, msg=None):
-    pass
-
-assert_not_almost_equal = assert_not_almost_equals
+sys.settrace(_trace)
+frame = sys._getframe().f_back
+while frame:
+    frame.f_trace = _trace
+    frame = frame.f_back
